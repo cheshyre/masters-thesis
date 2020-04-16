@@ -1,15 +1,106 @@
-% Set document style
-\documentclass{book}
+\documentclass[12pt]{memoir}
 
-% General packages
+\usepackage[letterpaper,left=3.0cm,right=2.5cm,top=3.0cm,bottom=3.0cm]{geometry}
 
-\title{Some title}
+% Style packages
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+% Physics packages
+\usepackage{braket}
+\usepackage{simplewick}
+
+\usepackage{hyperref}
+\usepackage[sort&compress]{natbib}
+
+% For license
+\usepackage[
+    type={CC},
+    modifier={by},
+    version={4.0},
+]{doclicense}
+
+\setsecnumdepth{subsubsection}
+\maxtocdepth{subsection}
+
+% Parskip-style
+% \setlength{\parindent}{0pt}
+\nonzeroparskip
+
+\include{macros}
+
+\title{Precision nuclear structure in the \\ in-medium similarity renormalization group}
+
 \author{Matthias Heinz}
+
+\date{April 14, 2020}
+
+% \DoubleSpacing
+\allowdisplaybreaks
 
 \begin{document}
 
-\maketitle:
+\frontmatter{}
 
-\tableofcontents
+% Title
+\maketitle
+
+\cleardoublepage\include{proposal/doc/00_abschlussarbeit_erklaerung}
+
+% Abstract
+\cleardoublepage\include{proposal/doc/00_abstract}
+
+% Dedication
+
+% Acknowledgements
+% \include{proposal/doc/00_acknowledgements}
+
+% Table of contents
+\cleardoublepage\tableofcontents
+
+% List of tables
+% \cleardoublepage\listoftables
+
+% List of figures
+\cleardoublepage\listoffigures
+
+% Uncomment for acronyms
+% use acronym in text with \ac{label} or \acl{label}
+% \cleardoublepage\include{proposal/doc/acronyms}
+
+% Can add list of symbols here
+% \cleardoublepage\include{proposal/doc/symbols}
+
+\mainmatter{}
+
+\include{proposal/doc/01_introduction}
+
+\include{proposal/doc/02_nuclear_hamiltonian}
+
+\include{proposal/doc/03_wavefunction_expansion_methods}
+
+\include{proposal/doc/03_imsrg_for_nuclear_structure}
+
+\include{proposal/doc/05_results}
+
+\include{proposal/doc/06_outlook}
+
+\begin{appendices}
+
+% \include{proposal/doc/a01}
+
+\end{appendices}
+
+\backmatter{}
+
+\bibliographystyle{unsrt} % use your favorite BIBTeX style
+% \nocite{*} % To display all refs, even uncited refs (useful when editting)
+\bibliography{sources}
 
 \end{document}
+

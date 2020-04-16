@@ -13,7 +13,7 @@ while updating a public repository with large-scale changes.
 I will attempt to use [a variant of semantic versioning for documents](https://semverdoc.org/)
 (see also the original [semantic versioning](https://semver.org/))
 to keep track of versions for the documents.
-The repository will be given a version number with 3 integers, MAJOR.MINOR.PATCH.
+Each document in the repository will be given a version number with 3 integers, MAJOR.MINOR.PATCH.
 Before submission of the defense version the documents,
 the version number changes should be interpreted as follows:
 

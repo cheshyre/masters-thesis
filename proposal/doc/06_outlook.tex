@@ -1,0 +1,55 @@
+\chapter{Summary and outlook}\label{ch:summary}
+
+In this thesis, we aim to study the ground-state properties of closed-shell nuclear systems in the IM-SRG(3).
+As a first step in that direction, we have implemented a generic IM-SRG(2)/(3) solver,
+which we applied at the IM-SRG(2) truncation level to the calculation of the ${}^4\text{He}$ ground-state energy
+and at the IM-SRG(2) and IM-SRG(3) level to the pairing Hamiltonian.
+At the IM-SRG(2) level, we found excellent agreement between our implementation
+and existing IM-SRG(2) implementations and published results~\cite{Stro15imsrgcpp,Herg16imsrglecnotes}.
+For the pairing Hamiltonian at the IM-SRG(3) level,
+we found that the three-body truncation does reduce the discrepancy between IM-SRG(2) and the exact solution
+in the region of large coupling.
+This can be interpreted as evidence that the many-body expansion is behaving systematically,
+a claim that we would also like to verify in nuclear systems.
+
+In principle, the next step would be to calculate ${}^4\text{He}$
+with the same Hamiltonian in the IM-SRG(3),
+where one would expect the corrections due to the three-body truncation to be small.
+With our $\emax=2$, this amounts to solving a system of approximately 4 billion coupled differential equations,
+most of which are the flowing matrix elements of the three-body Hamiltonian $W$.
+Of course, many of these matrix elements are not independent,
+related to one another via antisymmetry or (anti-)Hermiticity,
+and many should be exactly equal to 0,
+such as those that are blocked by the Pauli exclusion principle.
+By exploiting these symmetries, it may be possible to allow the current implementation
+of IM-SRG(3) to also work for ${}^4\text{He}$.
+This would offer the ability to look at many different metrics,
+such as the flowing ground-state energy and the MBPT corrections,
+when implementing a $J$-scheme IM-SRG(3) library.
+Even if the performance is insufficient, a calculation can be run for a few integration steps
+and the implementation of the fundamental commutators can be used
+to benchmark the $J$-scheme implementation of the fundamental commutators.
+
+Looking forward to the next phase of the project,
+some key deliverables will be:
+\begin{enumerate}
+  \item{
+    implementing a correct $J$-scheme IM-SRG(3) solver
+    for use in nuclear many-body calculations
+    using automatic recoupling tools~\cite{Tich20jcoupling};
+  }
+  \item tuning the performance of the solver to reach single-particle basis sizes large enough
+    for observables to be reasonably converged;
+  \item calculating the ground-state energies (and possibly other observables) for ${}^4\text{He}$
+    and ${}^{16}\text{O}$ in the IM-SRG(3) and systematically studying the effects of the three-body truncation.
+\end{enumerate}
+It will be interesting to see if the improvement looks significantly different for different Hamiltonians
+and if there are some well-reasoned physically-motivated ways to approximate the IM-SRG(3) well
+that could be used to extend current large-scale IM-SRG(2) implementations.
+Some options for such approximations might be
+the inclusion of certain terms that dominate the IM-SRG(3) contributions
+or the development of a way to include sparse approximate three-body operators
+that provide the dominant IM-SRG(3) contributions.
+With a robust implementation of our own,
+we will be in an excellent position to systematically study these options and many more.
+
