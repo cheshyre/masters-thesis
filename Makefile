@@ -27,6 +27,8 @@ clean:
 	rm -r latex.out/
 	rm -r proposal/doc/*.pdf
 	rm -r proposal/doc/images/*.pdf
+	rm -r proposal/talk/*.pdf
+	rm -r proposal/talk/images/*.pdf
 
 # --------------------- Main document rules --------------------------------
 
