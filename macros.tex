@@ -10,6 +10,11 @@
 \newcommand{\mev}{\, \text{MeV}}
 \newcommand{\invfm}{\, \text{fm}^{-1}}
 
+% EFT orders
+\newcommand{\ntwolo}{$\text{N}^{2}\text{LO}$}
+\newcommand{\nthreelo}{$\text{N}^{3}\text{LO}$}
+\newcommand{\nfourlo}{$\text{N}^{4}\text{LO}$}
+
 % Second quant
 \newcommand{\crea}[1]{\ensuremath{a_{#1}^{\dagger}}}
 \newcommand{\annih}[1]{\ensuremath{a_{#1}}}
@@ -50,3 +55,24 @@
 
 % m-scheme basis
 \newcommand*{\emax}{e_{\text{max}}}
+
+% Coupling
+\newcommand*{\sixj}[6]{
+  \begin{Bmatrix*}
+    #1 & #2 & #3 \\
+    #4 & #5 & #6
+  \end{Bmatrix*}
+}
+\newcommand*{\ninej}[9]{
+  \begin{Bmatrix*}
+    #1 & #2 & #3 \\
+    #4 & #5 & #6 \\
+    #7 & #8 & #9
+  \end{Bmatrix*}
+}
+\newcommand*{\cgsymbol}[6]{
+  \begin{pmatrix}[cc|c]
+    #1 & #2 & #3 \\
+    #4 & #5 & #6
+  \end{pmatrix}
+}

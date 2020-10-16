@@ -1,0 +1,44 @@
+\chapter*{Abstract}
+
+The in-medium similarity renormalization group (IMSRG)
+is an \abinitio{} many-body method used to great success
+to solve the time-independent Schr\"{o}dinger equation in medium-mass nuclear systems.
+Its computational cost scales polynomially in the size of the truncated model space,
+and its formalism is highly flexible,
+leading to multiple variants that have been developed to extend its original closed-shell
+formulation to open-shell systems.
+
+The current state-of-the-art implementations truncate the IMSRG equations
+at the normal-ordered two-body level,
+the first non-trivial order in the expansion.
+In this work, we seek to systematically study the effects
+of extending this truncation to the normal-ordered three-body level,
+the so-called IMSRG(3) approximation.
+Exploitation of symmetries is essential to making IMSRG(3) calculations tractable.
+We present the reduced $J$-scheme IMSRG(3) working equations,
+which we arrive at by applying angular-momentum reduction to the IMSRG(3) for spherical systems.
+
+We use our implementation of the $J$-scheme IMSRG(3)
+to investigate three-body contributions
+that first appear in the IMSRG(3)
+in light and medium-mass nuclei.
+We introduce approximate IMSRG(3) truncations
+that leave out the most expensive parts of the IMSRG(3).
+We find that in ${}^{4}\text{He}$
+and ${}^{16}\text{O}$
+in a restricted $\emax=2$ model space,
+these approximate IMSRG(3) truncation schemes
+deliver small, sub-percent corrections to the ground-state energies
+and larger corrections to radii.
+Further, by investigating the behavior
+under the removal or inclusion of certain terms,
+we see that the organization by computational cost
+used to set up our approximate truncation schemes
+is poorly motivated
+and some computationally more expensive terms
+provide larger corrections to ground-state energies
+than the cheaper terms in the truncation.
+This work is a key step towards
+high-precision many-body calculations of medium-mass nuclei
+in the IMSRG.
+

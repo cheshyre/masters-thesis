@@ -1,0 +1,128 @@
+\documentclass[12pt]{memoir}
+
+\usepackage[letterpaper,left=3.0cm,right=2.5cm,top=3.0cm,bottom=3.0cm]{geometry}
+
+% Style packages
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{array}
+\usepackage{hhline}
+\usepackage{titling}
+\usepackage{wasysym}
+
+% Physics packages
+\usepackage{braket}
+\usepackage{simplewick}
+
+\usepackage{hyperref}
+\usepackage[square, comma, numbers, sort&compress]{natbib}
+
+% For CG coefficients
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+% For license
+\usepackage[
+    type={CC},
+    modifier={by},
+    version={4.0},
+]{doclicense}
+
+\setsecnumdepth{subsubsection}
+\maxtocdepth{subsection}
+
+% Parskip-style
+% \setlength{\parindent}{0pt}
+\nonzeroparskip
+
+\include{macros}
+
+% Specify which words shouldn't be hyphenated
+\hyphenation{IMSRG}
+
+\title{Analysis of three-body effects in the \\ in-medium similarity renormalization group}
+
+\author{Matthias Heinz}
+
+\date{\today}
+
+% \DoubleSpacing
+\allowdisplaybreaks
+
+\begin{document}
+
+\frontmatter{}
+
+% Title
+% \maketitle
+\include{thesis/doc/00_titlepage}
+
+\cleardoublepage\include{thesis/doc/00_meta_information}
+
+\cleardoublepage\include{thesis/doc/00_abschlussarbeit_erklaerung}
+
+% Abstract
+\cleardoublepage\include{thesis/doc/00_abstract}
+
+% Dedication
+
+% Acknowledgements
+\include{thesis/doc/00_acknowledgements}
+
+% Table of contents
+\cleardoublepage\tableofcontents
+
+% List of tables
+\cleardoublepage\listoftables
+
+% List of figures
+\cleardoublepage\listoffigures
+
+% Uncomment for acronyms
+% use acronym in text with \ac{label} or \acl{label}
+% \cleardoublepage\include{thesis/doc/acronyms}
+
+% Can add list of symbols here
+% \cleardoublepage\include{thesis/doc/symbols}
+
+\mainmatter{}
+
+\include{thesis/doc/01_introduction}
+
+\include{thesis/doc/02_nuclear_hamiltonian}
+
+\include{thesis/doc/03_wavefunction_expansion_methods}
+
+\include{thesis/doc/04_imsrg_for_nuclear_structure}
+
+\include{thesis/doc/05_angular_momentum_coupling}
+
+\include{thesis/doc/06_jscheme_results}
+
+\include{thesis/doc/07_conclusions}
+
+\begin{appendices}
+
+  \include{thesis/doc/a01_mscheme_fundamental_commutators}
+  \include{thesis/doc/a02_jscheme_simplification_strategies}
+  \include{thesis/doc/a03_pairing_hamiltonian_imsrg3}
+
+\end{appendices}
+
+\backmatter{}
+
+\bibliographystyle{apsrev4-1-mh-mod} % use your favorite BIBTeX style
+% \nocite{*} % To display all refs, even uncited refs (useful when editting)
+\bibliography{sources}
+
+\end{document}
+

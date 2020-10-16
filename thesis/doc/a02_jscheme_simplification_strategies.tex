@@ -1,0 +1,168 @@
+\chapter{Simplification strategies for coupled fundamental commutators}\label{app:jscheme_commutator_tricks}
+
+For the coupled fundamental commutators,
+the key to arriving at the simplest expressions
+is to avoid unnecessary recoupling.
+Recoupling,
+where bra or ket couplings have to be broken and recreated
+to relate matrix elements on both sides of the expression,
+is unnecessary when symmetries of the matrix elements
+or of the expression can be exploited
+to bring the uncoupled expression into a form
+where its coupled analog no longer requires recoupling.
+Recoupling comes at the cost of an additional sum over an angular momentum
+and the inclusion of a Wigner $6j$ or $9j$ symbol.
+Thus avoiding unnecessary recoupling is essential for achieving better performance
+for implementations of the coupled expressions.
+In the following,
+we discuss two strategies for avoiding recoupling
+and apply them each to one example.
+
+\section{Using antisymmetry of input operator matrix elements}
+
+The uncoupled matrix elements are antisymmetric under exchange
+of any two bra or ket indices.
+This symmetry can easily be exploited to permute indices into a form
+that minimizes recoupling.
+
+Consider the $[\onebodyop{A}, \threebodyop{B}] \rightarrow \twobodyop{C}$ fundamental commutator.
+The uncoupled expression for the matrix elements of $C$ is
+\begin{equation}
+    C_{ijkl} = \sum_{ab} (n_a - n_b) A_{ab} B_{bijakl}\,,
+\end{equation}
+and the coupled expression is
+\begin{equation}
+    \begin{split}
+        C_{ijkl}^{J_C} &= (-1)^{j_i + j_j + j_k + j_l}
+        \sum_{j_a} \sum_{(J_{B,3}, J_{B,pq}, J_{B,st})} \hat{J}_{B,pq}\hat{J}_{B,st}\hat{J}_{B,3}^2 \\
+        &\quad\sum_{ab} (n_a \bar{n}_b - \bar{n}_a n_b)
+        \sixj{j_j}{j_i}{J_C}{j_a}{J_{B,3}}{J_{B,pq}}
+        \sixj{j_l}{j_k}{J_C}{j_a}{J_{B,3}}{J_{B,st}} \\
+        &\quad A_{ab}^{j_a} B_{bijakl}^{(J_{B,3}, J_{B,pq}, J_{B,st})}\,.
+    \end{split}
+\end{equation}
+
+The appearance of 6$j$ symbols is a result of
+breaking the $bi$ coupling on the right to form the $ij$ coupling on the left
+and breaking the $ak$ coupling on the right to form the $kl$ coupling on the left.
+By exploiting antisymmetry in the uncoupled matrix elements of $B$,
+we can arrive at the uncoupled expression
+\begin{equation}
+    C_{ijkl} = \sum_{ab} (n_a \bar{n}_b - \bar{n}_a n_b) A_{ab} B_{ijbkla}\,,
+\end{equation}
+which yields the coupled expression
+\begin{equation}
+    C_{ijkl}^{J_C} = \frac{1}{\hat{J}_{C}^2}
+    \sum_{j_a}
+    \sum_{J_{B,3}} \hat{J}_{B,3}^2
+    \sum_{ab} (n_a \bar{n}_b - \bar{n}_a n_b)
+    A_{ab}^{j_a} B_{ijbkla}^{(J_{B,3}, J_{C}, J_{C})}\,.
+\end{equation}
+
+\section{Using antisymmetry of output operator matrix elements}
+
+As a reminder, in this work we typically work with
+non-antisymmetrized expressions for the fundamental commutators,
+so one can not simply permute the indices on the output matrix elements.
+However, one can exploit that the output matrix elements
+will at some point be antisymmetrized
+and choose the term that contributes to the antisymmetrized result
+with the minimal recoupling.
+
+To make this clear, consider the following example:
+Suppose the three-body uncoupled matrix elements $O_{pqrstu}$
+are already antisymmetric in $stu$, but not in $pqr$.
+Thus to get the final antisymmetrized matrix elements $O^{\text{as}}_{pqrstu}$,
+one needs to evaluate
+\begin{equation}\label{eq:antisymmetrize_short}
+    O^{\text{as}}_{pqrstu} = \mathcal{A}_{pqr} O_{pqrstu}\,,
+\end{equation}
+with
+\begin{equation}
+    \mathcal{A}_{pqr} = \frac{1}{6} (1 + P_{prq} + P_{prq}^2) (1 - P_{pq})\,,
+\end{equation}
+where $P_{prq}$ cyclically permutes the indices $p$, $q$, and $r$
+and $P_{pq}$ exchanges the indices $p$ and $q$
+as discussed in Section~\ref{sec:jscheme_many_body_expressions}.
+
+Writing Eq.~\eqref{eq:antisymmetrize_short} out, one gets
+\begin{equation}\label{eq:antisymmetrize_long_normal}
+    O^{\text{as}}_{pqrstu} = \frac{1}{6} (O_{pqrstu} + O_{qrpstu} + O_{rpqstu} - O_{qprstu} - O_{rqpstu} - O_{prqstu})\,.
+\end{equation}
+Now consider
+\begin{equation}
+    \overline{O}_{pqrstu} \equiv O_{qrpstu}\,.
+\end{equation}
+Antisymmetrizing $\overline{O}_{pqrstu}$ gives
+\begin{equation}
+    \overline{O}^{\text{as}}_{pqrstu} = \frac{1}{6} (\overline{O}_{pqrstu} + \overline{O}_{qrpstu} + \overline{O}_{rpqstu}
+    - \overline{O}_{qprstu} - \overline{O}_{rqpstu} - \overline{O}_{prqstu})\,,
+\end{equation}
+which one can rewrite in terms of the original matrix elements $O_{pqrstu}$:
+\begin{equation}\label{eq:antisymmetrize_long_alternate}
+    \overline{O}^{\text{as}}_{pqrstu} = \frac{1}{6} (O_{qrpstu} + O_{rpqstu} + O_{pqrstu}
+    - O_{rqpstu} - O_{prqstu} - O_{qprstu})\,.
+\end{equation}
+One can quickly see that Eqs.~\eqref{eq:antisymmetrize_long_normal} and~\eqref{eq:antisymmetrize_long_alternate}
+contain the exact same terms, making them equal.
+Thus if $O_{pqrstu}$ is given by some many-body expression,
+one can permute the indices $p$, $q$, and $r$ on the right-hand (or left-hand) side of the expression,
+including an overall minus sign if the permutation is odd,
+and know that it will give the same result after antisymmetrization.
+
+Again, it is useful to consider a concrete application to illustrate how this strategy can be applied.
+Consider the $[\twobodyop{A}, \twobodyop{B}] \rightarrow \threebodyop{C}$ fundamental commutator.
+The uncoupled non-antisymmetrized expression is
+\begin{equation}
+    C_{ijklmn} = 9 \sum_{a} (A_{ijla} B_{akmn} - B_{ijla} A_{akmn})\,.
+\end{equation}
+which gives the coupled expression
+\begin{equation}\label{eq:comm_223_bad}
+    \begin{split}
+        C_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})} & =
+        9 \hat{J}_{C,ij} \hat{J}_{C,lm}
+        (-1)^{j_m + j_n}
+        \sum_{J_{mn}}
+        \hat{J}_{mn}^2
+        \sum_{a} (-1)^{j_a + j_k} \\
+        & \quad \quad \times
+        \sixj{j_k}{j_a}{J_{mn}}{j_{l}}{J_{C,3}}{J_{C,ij}}
+        \sixj{j_l}{j_m}{J_{C,lm}}{j_{n}}{J_{C,3}}{J_{mn}} \\
+        & \quad \quad \times \left(
+        A_{ijla}^{J_{C,ij}} B_{akmn}^{J_{mn}}
+        - B_{ijla}^{J_{C,ij}} A_{akmn}^{J_{mn}}
+        \right).
+    \end{split}
+\end{equation}
+One can immediately see that
+the $mn$ coupling on the right in $B$ and $A$ needs to be broken up
+to form the $lm$ coupling on the left,
+leading to some of the recoupling.
+
+However, the uncoupled expression
+\begin{equation}
+    D_{ijklmn} \equiv 9 \sum_{a} (A_{ijna} B_{aklm} - B_{ijna} A_{aklm})
+\end{equation}
+has the indices $l$, $m$, and $n$ on the right-hand side permuted cyclically,
+and it will no longer have this recoupling problem when the expression is coupled.
+The antisymmetrized matrix elements of $C$ and $D$ are equal,
+so one might as well simply calculate $D$ instead of $C$ and antisymmetrize that.
+The coupled expression for $D$ is
+\begin{equation}\label{eq:comm_223_good}
+    \begin{split}
+        D_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})} & =
+        -9 (-1)^{J_{C,lm}} \hat{J}_{C,ij} \hat{J}_{C,lm}
+        \sum_{a} (-1)^{j_a + j_k}
+        \sixj{j_k}{j_a}{J_{C,lm}}{j_{n}}{J_{C,3}}{J_{C,ij}} \\
+        & \quad \quad \times \left(
+        A_{ijna}^{J_{C,ij}} B_{aklm}^{J_{C,lm}}
+        - B_{ijna}^{J_{C,ij}} A_{aklm}^{J_{C,lm}}
+        \right).
+    \end{split}
+\end{equation}
+The final $6j$ symbol cannot be avoided
+as it forms the three-body angular-momentum coupling
+that is not present on the right-hand side.
+Comparing Eq.~\eqref{eq:comm_223_bad} and Eq.~\eqref{eq:comm_223_good},
+one can see the simplification afforded by carefully considering
+which quantity one actually wants to calculate.

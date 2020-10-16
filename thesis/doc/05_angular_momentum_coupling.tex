@@ -1,0 +1,1047 @@
+\chapter{Angular-momentum coupling for the IMSRG}\label{ch:ang_mom_coupling}
+
+In theoretical physics,
+the exploitation of symmetries is essential to making
+the solution of certain problems computationally tractable.
+In many-body theories,
+general theories can be simplified
+(in terms of computational cost)
+by exploiting the symmetries
+present in the system and the chosen single-particle basis.
+For rotationally invariant systems,
+this symmetry exploitation is called angular-momentum reduction (AMR),
+which casts the many-body problem
+into the language of spherical tensors
+and angular-momentum eigenstates
+and analytically simplifies
+the angular-momentum-projection dependence
+related to the geometry of spherical systems.
+The angular-momentum reduction of a many-body approach
+can reduce the storage and computational cost by orders of magnitude,
+making it a very powerful tool to extend
+the range of the approach to larger model spaces
+or in some cases make calculations possible at all.
+The IMSRG is an excellent target for angular-momentum reduction,
+as one typically needs to push the model space
+to quite large single-particle basis truncations
+to achieve converged results.
+In this chapter,
+we give a brief overview of how angular-momentum reduction works
+and discuss its application
+to the IMSRG(3).
+
+\section{Wigner-Eckart theorem}\label{sec:amr}
+
+Core to the angular-momentum reduction formalism
+are rotational symmetry,
+formally described by the SU(2) Lie group,
+and the generator of rotations,
+the angular momentum $\vec{J}$.
+The prerequisites for AMR are~\cite{Tich20jcoupling}:
+a rotationally invariant Hamiltonian, which commutes with $\vec{J}$;
+a spherical single-particle basis, which consists of eigenstates of $J^2$ and $J_{z}$;
+and a spherical reference state,
+which has good angular momentum $J=0$.
+In this case, the Hamiltonian, the single-particle basis,
+and the reference state share the symmetry group SU(2),
+and one can cast the working equations of the theory
+into a spherically symmetric form
+and perform the analytical simplifications
+to allow one to profit from AMR.
+
+An operator $O$ can be expanded in spherical tensors $\mathbf{O}^{J}$ of rank $J$,
+each with $2 J + 1$ components $O^{J}_{M}$~\cite{Suho07angmom}.
+These spherical tensors have definite transformation behavior
+under rotations.
+Specifically, for a given unitary transformation $U(R)$
+that corresponds to a rotation $R$,
+the spherical tensor components transform like~\cite{Suho07angmom}
+\begin{equation}
+  U(R)O^{J}_{M}U^{\dagger}(R) = \sum_{M'=-J}^{J} D^{J}_{M'M}(R) O_{M'}^{J}\,,
+\end{equation}
+where $D^{J}_{M'M}(R)$ are the Wigner $D$ functions,
+which also give the transformation of the spherical harmonics under the same rotation~\cite{Suho07angmom}:
+\begin{equation}
+  U(R)\ket{j m} = \sum_{m' = -j}^{j} D_{m' m}^{j}(R) \ket{j m'}.
+\end{equation}
+Spherical tensors can be further simplified by the Wigner-Eckart theorem.
+The Wigner-Eckart theorem states
+that the matrix elements of a spherical tensor
+can be factorized into
+a reduced matrix element that is operator-specific
+and independent of any angular-momentum projection
+(in the bra state, ket state, and the tensor component)
+and a projection-dependent part
+that contains only geometric information
+and is independent of the specific operator~\cite{Wign27wet,Ecka30wet}:
+\begin{equation}\label{eq:wet_theorem}
+  \braket{\xi_1 j_1 m_1 | O^{J}_{M} | \xi_2 j_2 m_2 }
+  = (-1 )^{2J} \frac{1}{\hat{\jmath}_1}
+  \cgsymbol{j_2}{J}{j_1}{m_2}{M}{m_1}
+  \braket{\xi_1 j_1 || \textbf{O}^{J} || \xi_2 j_2}\,,
+\end{equation}
+where $\hat{\jmath} \equiv \sqrt{2 j + 1}$.
+The states $\ket{\xi j m}$
+are eigenstates of
+angular momentum squared $J^2$
+and angular-momentum projection $J_{z}$,
+with all other relevant quantum numbers
+contained in $\xi$.
+We generally use the shorthand $\ket{p} = \ket{\tilde{p} m_p}$,
+where $\tilde{p} \equiv \xi_p j_p$, for simplicity.
+Occasionally, we need time-reversed states
+with flipped angular-momentum projections,
+which we denote by $\ket{\bar{p}} \equiv \ket{\tilde{p} (-m_p)}$.
+Note that the reduced single-particle index $\tilde{p}$ is the same
+for normal states and time-reversed states.
+Note that in Eq.~\eqref{eq:wet_theorem}
+we have chosen the ``Wigner'' convention for reduced matrix elements,
+which is also used by Suhonen, Edmonds, Racah, and Varshalovich
+and which differs from the convention used by, for example, Sakurai.
+
+Equipped with the factorization
+provided by the Wigner-Eckart theorem
+and the choice of spherical reference state
+and single-particle basis,
+one can in principle analytically perform the summations
+over all the angular-momentum-projection quantum numbers
+in a given expression.
+Intuitively,
+for every reduced index $\tilde{p}$ in a many-body expression,
+one knows that both the reduced matrix elements
+and the reference state do not depend on $m_p$,
+so one is able to treat the entire ``shell''
+of $2 j_p + 1$ states collectively.
+This is where the ``reduction'' part of angular-momentum reduction
+takes place,
+since the resulting expressions
+are completely independent of projection quantum numbers,
+and one can use a reduced representation
+for the remaining operator-specific information
+that does not depend on the projection quantum numbers.
+
+One particularly convenient approach to
+doing angular-momentum reduction
+is the diagrammatic expansion
+of an expression in a so-called Jucys graph
+and the simplification of the graph using various identities~\cite{Vars88angmom,Worm06angmom,Lind86angmom}.
+This approach was automated in the \texttt{amc} code
+published in Ref.~\cite{Tich20jcoupling}.
+The \texttt{amc} program
+automatically converts an uncoupled expression
+provided to it via an input file written in the AMC language
+into an equivalent $m$-independent reduced expression.
+Accomplishing this reduction by hand
+is tedious and error-prone,
+so we used this program as the primary workhorse
+for the angular-momentum reduction in Section~\ref{sec:amr_scalar}.
+
+\section{Angular-momentum reduction for scalar operators}\label{sec:amr_scalar}
+
+We will now apply angular-momentum reduction
+to the in-medium similarity renormalization group.
+The result of this symmetry reduction is the so-called $J$-scheme IMSRG,
+where the flow equations are formulated
+in terms of coupled or reduced matrix elements
+and the expressions have been reduced
+such that all dependence on angular-momentum projections
+has been analytically simplified.
+In the nuclear case,
+scalar operators play a special role in the IMSRG
+as the Hamiltonian and the generator are both scalar operators.
+This means that the many-body formalisms
+discussed in Chapters~\ref{ch:many_body} and~\ref{ch:imsrg}
+can be symmetry reduced for closed-shell systems
+by considering only the case of scalar spherical tensors.
+As a result,
+the $J$-scheme IMSRG can access energies and charge radii
+without needing to consider the more complicated case
+of general spherical tensor operators
+(which we give an outlook on in Section~\ref{sec:tensor_jscheme}).
+
+\subsection{Operator representation}
+
+Since spherical scalars are invariant under rotations
+and do not depend on any angular-momentum projection numbers,
+one can work with coupled matrix elements
+rather than reduced matrix elements
+  [as in Eq.~\eqref{eq:wet_theorem}],
+which differ by a simple factor
+(shown here for a one-body operator):
+\begin{equation}
+  \braket{\tilde{p} | T^{0}_{0} | \tilde{q}} =
+  \frac{1}{\hat{j_p}}\braket{\tilde{p} || \mathbf{T}^{0} || \tilde{q}}.
+\end{equation}
+
+For the IMSRG(3), we need coupled matrix elements
+for up to three-body operators.
+Thus, we need to couple our $A$-body basis
+to be made up of eigenstates of
+the $A$-body total angular momentum squared $J^2$
+and the $z$-component of the total angular momentum $J_{z}$.
+Since our chosen single-particle basis $\ket{p} = \ket{\tilde{p}m_p}$
+consists of eigenstates of $J_{\text{1B}}^2$ and $J_{\text{1B},z}$
+for the one-body angular momentum $\vec{J}_{\text{1B}}$,
+the coupled matrix elements of a scalar one-body operator
+are simply the uncoupled matrix elements
+\footnote{
+  In Eq.~\eqref{eq:onebody_coupled_to_uncoupled},
+  $p$ and $q$ have their angular-momentum projections
+  implicitly fixed to $m_p=m_q=1/2$.
+},
+\begin{equation}
+  O_{\tilde{p} \tilde{q}} = \braket{\tilde{p} m_p=1/2 | O | \tilde{q} m_q=1/2} \delta_{j_p j_q}
+  = O_{pq}\,, \label{eq:onebody_coupled_to_uncoupled}
+\end{equation}
+where we have explicitly denoted that $O$ is diagonal in $j_p$
+\footnote{We previously denoted $A$-body operators by $\abodyop{O}$.
+  From this point on, we will leave off the (redundant) superscript
+  to reduce notational clutter,
+  as the many-body rank of an operator
+  can be inferred from the number of indices on its matrix elements.}.
+Note that $m_p = m_q$ could be any other value
+within the range given by $j_p$;
+the matrix elements of a scalar operator will not change due to a different choice.
+We used $m_p=1/2$ here simply because it will always be a valid choice
+for all $j_p$ in our single-particle basis.
+
+The representation of one-body operators can be made a bit more clear
+by adding an angular-momentum ``channel'' to the notation:
+\begin{equation}
+  O^{j}_{pq}\,.
+\end{equation}
+The channel $j$ indicates that the matrix elements of $O_{pq}$
+are diagonal in $j_p=j_q$,
+and in this channel only the indices $p$ and $q$ with
+$j_p = j_q = j$ have non-zero matrix elements.
+We will stick with this notation
+for coupled one-body matrix elements going forward.
+
+Our antisymmetrized two-body states
+\begin{equation}
+  \ket{pq} = \crea{p} \crea{q} \ket{0}
+\end{equation}
+are not eigenstates of $J_{\text{2B}}^2$,
+only of $J_{\text{2B},z}$.
+Coupling the states to two-body angular momentum $J_{pq}$
+gives the coupled two-body basis,
+\begin{equation}\label{eq:unnormalized_twobody_basis}
+  \ket{(\tilde{p} \tilde{q}) J_{pq} M_{pq}} \equiv
+  \sum_{m_p, m_q}
+  \cgsymbol{j_p}{j_q}{J_{pq}}{m_p}{m_q}{M_{pq}}
+  \ket{pq}
+  \,,
+\end{equation}
+where the coupling brackets in $\ket{(\tilde{p} \tilde{q}) J_{pq} M_{pq}}$
+indicate that $j_p$ and $j_q$ are coupled to $J_{pq}$
+(and the rest of the quantum numbers in $\tilde{p}$ and $\tilde{q}$ are not involved).
+Note that the Clebsch-Gordan coefficients
+\begin{equation}
+  \cgsymbol{j_p}{j_q}{J_{pq}}{m_p}{m_q}{M_{pq}}
+\end{equation}
+are defined such that they are 0
+if $M_{pq} \neq m_p + m_q$,
+collapsing one of the sums over angular-momentum projections.
+The two-body states in Eq.~\eqref{eq:unnormalized_twobody_basis}
+are not normalized,
+which can be remedied by multiplying them with the following factor~\cite{Suho07angmom}:
+\begin{equation}
+  N_{pq(J_{pq})} \equiv \frac{\sqrt{1 + (-1)^{J_{pq}}
+      \delta_{\tilde{p} \tilde{q}}}}{1 + \delta_{\tilde{p} \tilde{q}}}.
+\end{equation}
+However, the coupled many-body expressions
+(and their numerical implementations)
+are simpler when using unnormalized coupled two- and three-body matrix elements.
+
+The unnormalized coupled two-body matrix elements of
+a scalar two-body operator $O$ are given by
+\begin{samepage}
+  \begin{align}
+    O^{J_{pq}}_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}}
+     & \equiv \braket{
+      (\tilde{p} \tilde{q})J_{pq} M_{pq}=0|
+      O
+      |(\tilde{r} \tilde{s})J_{pq} M_{pq}=0
+    }                           \\
+     & =\sum_{\substack{m_p,m_q \\ m_r,m_s}}
+    \cgsymbol{j_p}{j_q}{J_{pq}}{m_p}{m_q}{M_{pq} = 0}
+    \cgsymbol{j_r}{j_s}{J_{pq}}{m_r}{m_s}{M_{pq} = 0}
+    O_{pqrs}\,.\label{eq:unnormalized_twobody_mels}
+  \end{align}
+\end{samepage}
+Our representation builds the diagonality of the matrix elements
+in $J_{pq} = J_{rs}$ into the notation,
+as indicated by the $J_{pq}$ channel in the superscript.
+Again, $M_{pq} = 0$ is a choice we have made that works
+for all sets of $\tilde{p}$ and $\tilde{q}$.
+It is worth noting that not all $\tilde{p} \tilde{q}$
+(or $\tilde{r} \tilde{s}$) combinations
+can couple to a given $J_{pq}$.
+This is not a problem, because in Eq.~\eqref{eq:unnormalized_twobody_mels}
+the Clebsch-Gordan coefficients cause those matrix elements to be 0.
+This means they do not unphysically contribute in any many-body expressions.
+In numerical implementations,
+the exploitation of this reduction in the number of valid two-body states
+in a given angular-momentum channel
+is essential to improving performance to the point
+where calculations in large model spaces are possible.
+
+The definition of the coupled three-body basis follows analogously,
+\begin{equation}\label{eq:unnormalized_threebody_basis}
+  \ket{[(\tilde{p} \tilde{q}) J_{pq} \tilde{r}] J_{pqr} M_{pqr}} \equiv
+  \sum_{m_r, M_{pq}}
+  \cgsymbol{J_{pq}}{j_r}{J_{pqr}}{M_{pq}}{m_r}{M_{pqr}}
+  \sum_{m_p, m_q}
+  \cgsymbol{j_p}{j_q}{J_{pq}}{m_p}{m_q}{M_{pq}}
+  \ket{pqr}
+  \,,
+\end{equation}
+where we have selected the ``standard'' coupling order
+with $j_p$ and $j_q$ coupled first to $J_{pq}$
+and then $J_{pq}$ and $j_r$ coupled to $J_{pqr}$.
+Once again, these states are not normalized,
+but working with unnormalized states is more convenient.
+
+The unnormalized coupled matrix elements of a three-body operator $O$
+are given by
+\begin{align}
+  \phantom{O^{(J_{pqr}, J_{pq}, J_{st})}_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}}
+   & \begin{aligned}
+    \mathllap{O^{(J_{pqr}, J_{pq}, J_{st})}_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}}
+    \equiv \braket{
+    [(\tilde{p} \tilde{q})J_{pq} \tilde{r}] J_{pqr} M_{pqr} = 1/2 |
+    O
+    | [(\tilde{s} \tilde{t})J_{st} \tilde{u}] J_{pqr} M_{pqr} = 1/2
+    }
+  \end{aligned} \\
+   & \begin{aligned}
+    \mathllap{}
+    = \sum_{\substack{m_p,m_q,m_r,M_{pq}                     \\ m_s,m_t,m_u,M_{st}}} &
+    \cgsymbol{j_p}{j_q}{J_{pq}}{m_p}{m_q}{M_{pq}}
+    \cgsymbol{j_s}{j_t}{J_{st}}{m_s}{m_t}{M_{st}}            \\
+     & \cgsymbol{J_{pq}}{j_r}{J_{pqr}}{M_{pq}}{m_r}{M_{pqr}=1/2}
+    \cgsymbol{J_{st}}{j_u}{J_{pqr}}{M_{st}}{m_u}{M_{pqr}=1/2}    \\
+     & O_{pqrstu}
+    \,.
+  \end{aligned}
+\end{align}
+The channel structure of the three-body matrix elements
+has grown more complicated,
+with the channel including the diagonal total three-body angular momentum
+$J_{pqr} = J_{stu}$
+and the intermediate couplings $J_{pq}$ and $J_{st}$.
+These intermediate couplings can take on different values,
+substantially increasing the number of three-body channels
+for which we need to handle matrix elements.
+Again, $M_{pqr} = 1/2$ is a choice we have made that works
+for all sets of $\tilde{p}$, $\tilde{q}$, and $\tilde{r}$.
+
+At this point, it is useful to discuss the symmetry properties
+of these matrix elements.
+For a Hermitian operator
+the coupled matrix elements have the following properties:
+\begin{samepage}
+  \begin{subequations}
+    \begin{align}
+      O_{\tilde{p}\tilde{q}}                                                                 & = O_{\tilde{q}\tilde{p}}\,, \\
+      O^{J_{pq}}_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}}                                      & =
+      O^{J_{pq}}_{\tilde{r}\tilde{s}\tilde{p}\tilde{q}}\,,                                                                 \\
+      O^{(J_{pqr}, J_{pq}, J_{st})}_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}} & =
+      O^{(J_{pqr}, J_{st}, J_{pq})}_{\tilde{s}\tilde{t}\tilde{u}\tilde{p}\tilde{q}\tilde{r}}\,.\label{eq:coupled_herm_threebody}
+    \end{align}
+  \end{subequations}
+\end{samepage}
+Note the transposition of the intermediate couplings
+in the three-body channel in Eq.~\eqref{eq:coupled_herm_threebody}.
+For an anti-Hermitian operator
+the coupled matrix elements have the following properties:
+\begin{subequations}
+  \begin{align}
+    O_{\tilde{p}\tilde{q}}                                                                 & = - O_{\tilde{q}\tilde{p}}\,, \\
+    O^{J_{pq}}_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}}                                      & =
+    - O^{J_{pq}}_{\tilde{r}\tilde{s}\tilde{p}\tilde{q}}\,,                                                                 \\
+    O^{(J_{pqr}, J_{pq}, J_{st})}_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}} & =
+    - O^{(J_{pqr}, J_{st}, J_{pq})}_{\tilde{s}\tilde{t}\tilde{u}\tilde{p}\tilde{q}\tilde{r}}\,.\label{eq:coupled_antiherm_threebody}
+  \end{align}
+\end{subequations}
+
+Our two- and three-body matrix elements are also antisymmetric,
+although this symmetry is not realized as simply
+for coupled matrix elements as it is for uncoupled matrix elements.
+Two-body matrix elements have the following properties:
+\begin{subequations}
+  \begin{align}
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}}^{J_{pq}} & =
+    - (-1)^{j_p + j_q - J_{pq}}
+    O_{\tilde{q}\tilde{p}\tilde{r}\tilde{s}}^{J_{pq}}\,,  \\
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}}^{J_{pq}} & =
+    - (-1)^{j_r + j_s - J_{pq}}
+    O_{\tilde{p}\tilde{q}\tilde{s}\tilde{r}}^{J_{pq}}\,.
+  \end{align}
+\end{subequations}
+Three-body matrix elements have the following properties:
+\begin{subequations}
+  \begin{align}
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{pq}, J_{st})} & =
+    - (-1)^{j_p + j_q - J_{pq}}
+    O_{\tilde{q}\tilde{p}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{pq}, J_{st})}\,,  \\
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{pq}, J_{st})} & =
+    \hat{J}_{pq}
+    \sum_{J_{2}} \hat{J}_{2}
+    \sixj{j_p}{j_q}{J_{pq}}{j_r}{J_{pqr}}{J_{2}}
+    O_{\tilde{r}\tilde{q}\tilde{p}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{2}, J_{st})}\,,   \\
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{pq}, J_{st})} & =
+    - (-1)^{j_q + j_r - J_{pq}}
+    \hat{J}_{pq}
+    \sum_{J_{2}} \hat{J}_{2} (-1)^{J_{2}}
+    \sixj{j_q}{j_p}{J_{pq}}{j_r}{J_{pqr}}{J_{2}}
+    O_{\tilde{p}\tilde{r}\tilde{q}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{2}, J_{st})}\,,   \\
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{pq}, J_{st})} & =
+    - (-1)^{j_s + j_t - J_{st}}
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{t}\tilde{s}\tilde{u}}^{(J_{pqr}, J_{pq}, J_{st})}\,,  \\
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{pq}, J_{st})} & =
+    \hat{J}_{st}
+    \sum_{J_{2}} \hat{J}_{2}
+    \sixj{j_s}{j_t}{J_{st}}{j_u}{J_{pqr}}{J_{2}}
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{u}\tilde{t}\tilde{s}}^{(J_{pqr}, J_{pq}, J_{2})}\,,   \\
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{t}\tilde{u}}^{(J_{pqr}, J_{pq}, J_{st})} & =
+    - (-1)^{j_t + j_u - J_{st}}
+    \hat{J}_{st}
+    \sum_{J_{2}} \hat{J}_{2} (-1)^{J_{2}}
+    \sixj{j_t}{j_s}{J_{st}}{j_u}{J_{pqr}}{J_{2}}
+    O_{\tilde{p}\tilde{q}\tilde{r}\tilde{s}\tilde{u}\tilde{t}}^{(J_{pqr}, J_{pq}, J_{2})}\,.
+  \end{align}
+\end{subequations}
+We provide only the pairwise antisymmetry properties,
+as the relations for the remaining permutations
+can be obtained by applying pairwise permutations.
+
+At this point, we drop the cumbersome ``tilde'' notation
+for reduced state indices.
+The channels on matrix elements should make it clear
+whether the matrix elements are coupled or not.
+Additionally, in the surrounding text,
+we make it clear whether an expression
+is coupled or uncoupled.
+
+\subsection{Coupled many-body expressions}\label{sec:jscheme_many_body_expressions}
+
+In addition to the fundamental commutators,
+IMSRG calculations typically employ a couple standard operations,
+which we discuss here.
+The first is bringing the initial Hamiltonian into normal order
+with respect to the employed $A$-body reference state.
+Given a Hamiltonian $H$ with one- through three-body parts,
+the coupled expressions for
+the matrix elements of the normal-ordered Hamiltonian are
+\begin{subequations}
+  \begin{align}
+    \phantom{W_{pqrstu}^{(J_{pqr}, J_{pq}, J_{st})}}
+     & \begin{aligned}
+      \mathllap{E} = \bar{H} & = \sum_{j_{a}} \hat{\jmath}^{2}_a \sum_{a} H_{aa}^{j_{a}}
+      + \frac{1}{2} \sum_{J_{ab}} \hat{J}_{ab}^2 \sum_{ab} H_{abab}^{J_{ab}}             \\
+                             & \quad
+      + \frac{1}{6} \sum_{J_{ab} J_{abc}} \hat{J}_{abc}^2 \sum_{abc}  H_{abcabc}^{(J_{abc}, J_{ab}, J_{ab})}\,,
+    \end{aligned} \\
+     & \begin{aligned}
+      \mathllap{f_{pq}^{j_p}} = \bar{H}_{pq}^{j_p} &
+      = H_{pq}^{j_p}
+      + \frac{1}{\hat{\jmath}_{p}^2} \sum_{J_{pa}} \hat{J}_{pa}^2 \sum_{a} H_{paqa}^{J_{pa}} \\
+                                                   & \quad
+      + \frac{1}{2 \hat{\jmath}_{p}^2} \sum_{J_{pa} J_{pab}} \hat{J}_{pab}^2 \sum_{ab}  H_{pabqab}^{(J_{pab}, J_{pa}, J_{pa})}\,,
+    \end{aligned} \\
+     & \begin{aligned}
+      \mathllap{\Gamma_{pqrs}^{J_{pq}}} = \bar{H}_{pqrs}^{J_{pq}}
+       & = H_{pqrs}^{J_{pq}}
+      + \frac{1}{\hat{J}_{pq}^2} \sum_{J_{pqa}} \hat{J}_{pqa}^2 \sum_{a} H_{pqarsa}^{(J_{pqa}, J_{pq}, J_{pq})} \,,
+    \end{aligned} \\
+     & \begin{aligned}
+      \mathllap{W_{pqrstu}^{(J_{pqr}, J_{pq}, J_{st})}} = \bar{H}_{pqrstu}^{(J_{pqr}, J_{pq}, J_{st})} & = H_{pqrstu}^{(J_{pqr}, J_{pq}, J_{st})} \,.
+    \end{aligned}
+  \end{align}
+\end{subequations}
+Recall our previous convention that
+the indices $p$, $q$, $r$, \ldots\ run over all single-particle states,
+the indices $i$, $j$, $k$, \ldots\ run over hole states,
+and the indices $a$, $b$, $c$, \ldots\ run over particle states.
+
+Next, we need an antisymmetrizer for our two- and three-body matrix elements.
+This is because the fundamental commutators in Section~\ref{sec:jscheme_fundamental_comm}
+are not antisymmetrized to simplify the expressions and the numerical implementations.
+Thus, we need to explicitly restore the antisymmetry of some index combinations
+after evaluating the non-antisymmetrized fundamental commutators.
+In the two-body case,
+the antisymmetrizer is
+\begin{equation}\label{eq:twobody_antisymmetrizer}
+  \mathcal{A}_{\text{2B}} \equiv\mathcal{A}_{pq} \mathcal{A}_{rs}\,,
+\end{equation}
+with
+\begin{equation}
+  \mathcal{A}_{pq} \equiv \frac{1}{2}(1 - P_{pq})\,.
+\end{equation}
+Recall that in the uncoupled expressions in Chapter~\ref{ch:imsrg}
+the permutation operator $P_{pq}$ simply exchanged the indices $p$ and $q$ in the following expression.
+Now that indices are coupled,
+the action of permutation operators is complicated
+by the fact that they also change the coupling order.
+To implement $\mathcal{A}_{\text{2B}}$,
+all we need are the expressions for the action of $P_{pq}$
+and $P_{rs}$ on two-body matrix elements:
+\begin{subequations}
+  \begin{align}
+    O_{pqrs}^{J_{pq}} & \xleftarrow{P_{pq}} (-1)^{j_p + j_q - J_{pq}} O_{qprs}^{J_{pq}}\,, \\
+    O_{pqrs}^{J_{pq}} & \xleftarrow{P_{rs}} (-1)^{j_r + j_s - J_{pq}} O_{pqsr}^{J_{pq}}\,.
+  \end{align}
+\end{subequations}
+Using these operations along with scalar multiplication of and addition of matrix elements,
+the implementation of a two-body antisymmetrizer is simple.
+
+In the three-body case,
+the antisymmetrizer is
+\begin{equation}\label{eq:threebody_antisymmetrizer}
+  \mathcal{A}_{\text{3B}} \equiv \mathcal{A}_{pqr} \mathcal{A}_{stu}\,,
+\end{equation}
+with
+\begin{equation}
+  \mathcal{A}_{pqr} \equiv \frac{1}{6}(1 + P_{prq} + P_{prq}^2)(1 - P_{pq})\,.
+\end{equation}
+Here $P_{prq}$ cyclically permutes the indices $p$, $q$, and $r$ such that
+\begin{equation}
+  (p, q, r) \xrightarrow{P_{prq}} (q, r, p) \xrightarrow{P_{prq}} (r, p, q) \xrightarrow{P_{prq}} (p, q, r)\,.
+\end{equation}
+There are other ways to define $\mathcal{A}_{pqr}$,
+for example in terms of $P_{pq}$ and $P_{qr}$.
+They are all equivalent,
+and which one one chooses is a matter of preference.
+The action of $P_{prq}$, $P_{pq}$, $P_{sut}$, and $P_{st}$
+on three-body matrix elements is given by
+\begin{subequations}
+  \begin{align}
+    O_{pqrstu}^{(J_{pqr}, J_{pq}, J_{st})} &
+    \xleftarrow{P_{prq}}
+    -1 (-1)^{j_p + j_q - J_{pq}} \hat{J}_{pq}
+    \sum_{J_{2}} \hat{J}_{2}
+    \sixj{j_q}{j_p}{J_{pq}}{j_r}{J_{pqr}}{J_{2}}
+    O_{rpqstu}^{(J_{pqr}, J_{2}, J_{st})}\,,  \\
+    O_{pqrstu}^{(J_{pqr}, J_{pq}, J_{st})} &
+    \xleftarrow{P_{pq}}
+    (-1)^{j_p + j_q - J_{pq}}
+    O_{qprstu}^{(J_{pqr}, J_{pq}, J_{st})}\,, \\
+    O_{pqrstu}^{(J_{pqr}, J_{pq}, J_{st})} &
+    \xleftarrow{P_{sut}}
+    -1 (-1)^{j_s + j_t - J_{st}} \hat{J}_{st}
+    \sum_{J_{2}} \hat{J}_{2}
+    \sixj{j_t}{j_s}{J_{st}}{j_u}{J_{pqr}}{J_{2}}
+    O_{pqrust}^{(J_{pqr}, J_{pq}, J_{2})}\,,  \\
+    O_{pqrstu}^{(J_{pqr}, J_{pq}, J_{st})} &
+    \xleftarrow{P_{st}}
+    (-1)^{j_s + j_t - J_{st}}
+    O_{pqrtsu}^{(J_{pqr}, J_{pq}, J_{st})}\,.
+  \end{align}
+\end{subequations}
+With these basic operations in hand,
+one can implement a general three-body antisymmetrizer.
+
+Finally, the second-order M{\o}ller-Plesset MBPT (MP2) energy correction
+is a critical diagnostic for the IMSRG
+as it is directly proportional to the matrix elements
+that the IMSRG evolution should suppress.
+The coupled expression for the MP2 energy correction is
+\begin{equation}
+  E_{\text{MP2}} =
+  - \sum_{j_{a}} \hat{\jmath}_{a}^2 \sum_{ai} \frac{|f_{ai}^{j_a}|^2}{\epsilon_{i}^{a}}
+  - \frac{1}{4} \sum_{J_{ab}} \hat{J}_{ab}^2 \sum_{abij}
+  \frac{|\Gamma_{abij}^{J_{ab}}|^2}{\epsilon_{ij}^{ab}}
+  - \frac{1}{36} \sum_{J_{abc} J_{ab} J_{ij}} \hat{J}_{abc}^2 \sum_{abcijk}
+  \frac{|W_{abcijk}^{(J_{abc}, J_{ab}, J_{ij})}|^2}{\epsilon_{ijk}^{abc}}\,,
+\end{equation}
+with
+\begin{align}
+  \epsilon_{ij\cdots}^{ab\cdots} & = e_a + e_b + \cdots - (e_i + e_j + \cdots)\,, \\
+  e_p                            & = f_{pp}\,,
+\end{align}
+as in Eq.~\eqref{eq:mp_energy_denom}.
+
+\subsection{Coupled fundamental commutators}\label{sec:jscheme_fundamental_comm}
+
+In this section,
+we present the coupled expressions for
+the fundamental commutators of two scalar operators.
+These expressions were obtained using
+the \texttt{amc} code from Ref.~\cite{Tich20jcoupling}
+on the uncoupled commutator expressions
+given in Appendix~\ref{app:mscheme_fundamental_commutators}.
+While this approach immediately produced desirable results
+for some commutators,
+for many it was possible to simplify the resulting expressions
+by exploiting symmetries of the uncoupled expressions.
+We discuss examples of these simplifications in Appendix~\ref{app:jscheme_commutator_tricks}.
+Here, we will only show the simplest expressions
+we were able to produce.
+
+The commutator expressions are ``fundamental'' in the sense
+that they are the basic operations required for any IMSRG(3) implementation.
+Using these expressions,
+one can quickly combine and expand them to produce
+the full IMSRG(3) flow equations (see Section~\ref{sec:imsrgthree}),
+and one can also easily implement
+the series of nested commutators required by
+the Magnus and BCH expansions (see Section~\ref{sec:imsrg_magnus}).
+Thus, correctly and efficiently implementing these expressions
+constitutes the main challenge of any IMSRG implementation.
+
+The commutator of a $K$-body and an $L$-body operator
+gives an operator with \mbox{$|K-L|$-} to $(K+L-1)$-body parts:
+\begin{equation}
+  \left[A^{(K)}, B^{(L)}\right] = \sum_{M=|K - L|}^{K + L - 1} C^{(M)}\,.
+\end{equation}
+The expressions we give below are
+for the coupled matrix elements of the different $M$-body terms.
+In the IMSRG(3), we discard any four- and five-body parts induced,
+which appear in principle
+in the commutator of a two-body and a three-body operator
+and in the commutator of two three-body operators.
+We focus on the case where $A$ and $B$ and thus the resulting $C$ are scalar operators.
+
+Note that expressions for two- and three-body matrix elements
+are not antisymmetrized,
+so the appropriate antisymmetrizer must be applied
+  [see Eqs.~\eqref{eq:twobody_antisymmetrizer} and~\eqref{eq:threebody_antisymmetrizer}]
+to the matrix elements after evaluating the commutator.
+We break our typical index label convention
+to use the convention that the index labels $i$,~$j$,~$k$,~\ldots\
+are reserved for external indices,
+that is, indices appearing on the matrix elements of the resulting operator,
+and the index labels $a$,~$b$,~$c$,~\ldots\
+are reserved for contracted indices,
+that is, indices that are summed over in the matrix elements of the input operators.
+As in Chapter~\ref{ch:imsrg}, $\bar{n}_a = 1 - n_a$.
+
+\subsubsection{
+  \texorpdfstring{$[\onebodyop{A}, \onebodyop{B}]$}{[1, 1]}
+}
+
+The commutator of two one-body operators has
+zero- and one-body parts.
+
+The resulting zero-body contribution is given by the coupled expression
+\begin{equation}
+  C = \sum_{j_a} \hat{\jmath}^{2}_{a} \sum_{ab} (n_a - n_b) A_{ab}^{j_a} B_{ba}^{j_a}\,.
+\end{equation}
+
+The resulting coupled one-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ij}^{j_i} = \sum_{a}(A_{ia}^{j_i} B_{aj}^{j_i} - B_{ia}^{j_i} A_{aj}^{j_i})\,.
+\end{equation}
+
+\subsubsection{
+  \texorpdfstring{$[\onebodyop{A}, \twobodyop{B}]$}{[1, 2]}
+}
+
+The commutator of a one-body operator and a two-body operator has
+one- and two-body parts.
+
+The resulting coupled one-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ij}^{j_i} = \frac{1}{\hat{\jmath}_{i}^2} \sum_{j_a} \sum_{J_2} \hat{J}_{2}^2
+  \sum_{ab} (n_a \bar{n}_b - \bar{n}_a n_b) A_{ab}^{j_a} B_{iajb}^{J_2}\,.
+\end{equation}
+
+The resulting coupled two-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ijkl}^{J_C} = 2 \sum_{j_a} \sum_{a} \left(
+  A_{ia}^{j_a} B_{ajkl}^{J_C} - A_{ak}^{j_a} B_{ijal}^{J_C}
+  \right)
+  \,.
+\end{equation}
+
+\subsubsection{
+  \texorpdfstring{$[\twobodyop{A}, \twobodyop{B}]$}{[2, 2]}
+}
+
+The commutator of two two-body operators has
+zero- through three-body parts.
+
+The resulting zero-body contribution is given by the coupled expression
+\begin{equation}
+  C = \frac{1}{4}\sum_{J_{ab}} \hat{J}_{ab}^{2}\sum_{abcd}
+  (n_a n_b \bar{n}_c \bar{n}_d - \bar{n}_a \bar{n}_b n_c n_d)
+  A_{abcd}^{J_{ab}} B_{cdab}^{J_{ab}}\,.
+\end{equation}
+
+The resulting coupled one-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ij}^{j_i} = \frac{1}{2} \frac{1}{\hat{\jmath}_{i}^2}
+  \sum_{J_{ab}} \hat{J}_{ab}^2
+  \sum_{abc}
+  (\bar{n}_a \bar{n}_b n_c + n_a n_b \bar{n}_c)
+  (A_{ciab}^{J_{ab}} B_{abcj}^{J_{ab}} - B_{ciab}^{J_{ab}} A_{abcj}^{J_{ab}})\,.
+\end{equation}
+
+The resulting coupled two-body matrix elements are given by the coupled expression
+\begin{equation}
+  C^{J_C}_{ijkl}
+  =
+  D^{J_C}_{ijkl}
+  + E^{J_C}_{ijkl}\,,
+\end{equation}
+with
+\begin{align}
+  D^{J_C}_{ijkl}                        & \equiv \frac{1}{2} \sum_{ab}
+  (\bar{n}_a \bar{n}_b - n_a n_b)
+  \left(
+  A_{ijab}^{J_C} B_{abkl}^{J_C} - B_{ijab}^{J_C} A_{abkl}^{J_C}
+  \right)\,,                                                           \\
+  \overline{E}_{i\bar{l}k\bar{j}}^{J_C} & \equiv 4 \sum_{ab}
+  (n_a \bar{n}_b - \bar{n}_a n_b)
+  \overline{A}_{a\bar{b}k\bar{j}}^{J_C}
+  \overline{B}_{i\bar{l}a\bar{b}}^{J_C}\,. \label{eq:comm222_term2}
+\end{align}
+The expression in Eq.~\eqref{eq:comm222_term2} is written
+in terms of Pandya-transformed matrix elements,
+where the two-body Pandya transformation is given by~\cite{Pand56pandya}
+\begin{equation}
+  \overline{O}_{p\bar{q}r\bar{s}}^{J_{2}} \equiv
+  - \sum_{J_{2}'}
+  \hat{J}_{2}^{\prime 2}
+  \sixj{j_p}{j_q}{J_{2}}{j_r}{j_s}{J_{2}'}
+  O_{prqs}^{J_{2}'}\,.
+\end{equation}
+The indices $\bar{q}$ and $\bar{s}$ are time reversed,
+that is, their angular-momentum projections are flipped.
+Since we are working with reduced indices
+without angular-momentum projections everywhere,
+this distinction is irrelevant,
+but we keep the modified indices around to be formally precise.
+The Pandya-transformed matrix elements
+are useful intermediates that isolate recoupling on $A$, $B$, and $E$
+that can be done independently.
+The resulting $\overline{E}$ must be
+converted back to normal coupled matrix elements
+by a final Pandya transformation
+before being added to $D$ to give $C$.
+
+The resulting coupled three-body matrix elements are given by the coupled expression
+\begin{equation}
+  \begin{split}
+    C_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})} & =
+    -9 (-1)^{J_{C,lm}} \hat{J}_{C,ij} \hat{J}_{C,lm}
+    \sum_{a} (-1)^{j_a + j_k}
+    \sixj{j_k}{j_a}{J_{C,lm}}{j_{n}}{J_{C,3}}{J_{C,ij}} \\
+    & \quad \quad \times \left(
+    A_{ijna}^{J_{C,ij}} B_{aklm}^{J_{C,lm}}
+    - B_{ijna}^{J_{C,ij}} A_{aklm}^{J_{C,lm}}
+    \right).
+  \end{split}
+\end{equation}
+
+\subsubsection{
+  \texorpdfstring{$[\onebodyop{A}, \threebodyop{B}]$}{[1, 3]}
+}
+
+The commutator of a one-body operator and a three-body operator has
+two- and three-body parts.
+
+The resulting coupled two-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ijkl}^{J_C} = \frac{1}{\hat{J}_{C}^2}
+  \sum_{j_a}
+  \sum_{J_{B,3}} \hat{J}_{B,3}^2
+  \sum_{ab} (n_a \bar{n}_b - \bar{n}_a n_b)
+  A_{ab}^{j_a} B_{ijbkla}^{(J_{B,3}, J_{C}, J_{C})}\,.
+\end{equation}
+
+The resulting coupled three-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})} =
+  3 \sum_{j_a} \sum_{a}
+  \left(
+  A_{ia}^{j_a} B_{ajklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}
+  - A_{la}^{j_a} B_{ijkamn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}
+  \right).
+\end{equation}
+
+\subsubsection{
+  \texorpdfstring{$[\twobodyop{A}, \threebodyop{B}]$}{[2, 3]}
+}
+
+The commutator of a two-body operator and a three-body operator has
+one- through three-body parts.
+
+The resulting coupled one-body matrix elements are given by the coupled expression
+\begin{equation}
+  \begin{split}
+    C_{ij}^{j_i} &= - \frac{1}{4} \frac{1}{\hat{\jmath}_{i}^2}
+    \sum_{(J_{B,3}, J_{ab})}
+    \hat{J}_{B,3}^2
+    \sum_{abcd}
+    (n_a n_b \bar{n}_c \bar{n}_d - \bar{n}_a \bar{n}_b n_c n_d)
+    A_{cdab}^{J_{ab}} B_{abicdj}^{(J_{B,3}, J_{ab}, J_{ab})}\,.
+  \end{split}
+\end{equation}
+
+The resulting coupled two-body matrix elements are given by the coupled expression
+\begin{equation}
+  \begin{split}
+    C_{ijkl}^{J_C} &= \frac{(-1)^{J_C}}{\hat{J}_C}
+    \sum_{J_A, J_{B,3}} \hat{J}_A \hat{J}_{B,3}^2
+    \sum_{abc}
+    (n_a \bar{n}_b \bar{n}_c + \bar{n}_a n_b n_c) \\
+    & \quad \left(
+    (-1)^{j_k + j_l}
+    \sixj{j_l}{j_k}{J_C}{j_a}{J_{B,3}}{J_A}
+    A_{bcak}^{J_A} B_{ijabcl}^{(J_{B,3}, J_C, J_A)}
+    \right.\\
+    &\quad\quad \left. + (-1)^{j_i + j_j}
+    \sixj{j_j}{j_i}{J_C}{j_a}{J_{B,3}}{J_A}
+    A_{bcai}^{J_A} B_{klabcj}^{(J_{B,3}, J_C, J_A)}
+    \right)\,.
+  \end{split}
+\end{equation}
+
+The resulting coupled three-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ijklmn}^{(J_{C,3}, J_{C, ij}, J_{C, lm})}
+  = D_{ijklmn}^{(J_{C,3}, J_{C, ij}, J_{C, lm})}
+  + E_{ijklmn}^{(J_{C,3}, J_{C, ij}, J_{C, lm})}\,,
+\end{equation}
+with
+\begin{align}
+  D_{ijklmn}^{(J_{C,3}, J_{C, ij}, J_{C, lm})}
+   & \equiv \frac{3}{2} \sum_{ab} (\bar{n}_a \bar{n}_b - n_a n_b)
+  A_{ijab}^{J_{C, ij}}
+  B_{abklmn}^{(J_{C,3}, J_{C, ij}, J_{C, lm})}\,,                 \\
+  E_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}
+   & \equiv
+  -\frac{3}{2} \sum_{ab} (\bar{n}_a \bar{n}_b - n_a n_b)
+  A_{ablm}^{J_{C, lm}}
+  B_{ijkabn}^{(J_{C,3}, J_{C, ij}, J_{C, lm})}\,.
+\end{align}
+
+\subsubsection{
+  \texorpdfstring{$[\threebodyop{A}, \threebodyop{B}]$}{[3, 3]}
+}
+
+The commutator of two three-body operators has
+zero- through three-body parts.
+
+The resulting zero-body contribution is given by the coupled expression
+\begin{equation}
+  C = \frac{1}{36}
+  \sum_{(J_3, J_{ab}, J_{de})} \hat{J}_{3}^2
+  \sum_{abcdef}
+  (
+  n_a n_b n_c \bar{n}_d \bar{n}_e \bar{n}_f
+  - \bar{n}_a \bar{n}_b \bar{n}_c n_d n_e n_f
+  )
+  A_{abcdef}^{(J_{3}, J_{ab}, J_{de})}
+  B_{defabc}^{(J_{3}, J_{de}, J_{ab})}\,.
+\end{equation}
+
+The resulting coupled one-body matrix elements are given by the coupled expression
+\begin{equation}
+  \begin{split}
+    C_{ij}^{j_i} & = \frac{1}{12} \frac{1}{\hat{j}_{i}^2}
+    \sum_{(J_{3}, J_{ab}, J_{cd})} \hat{J}_{3}^2
+    \sum_{abcde} (
+    n_a n_b \bar{n}_c \bar{n}_d \bar{n}_e
+    + \bar{n}_a \bar{n}_b n_c n_d n_e
+    ) \\
+    & \quad \left(
+    A_{abicde}^{(J_3, J_{ab}, J_{cd})}
+    B_{cdeabj}^{(J_3, J_{cd}, J_{ab})}
+    - B_{abicde}^{(J_3, J_{ab}, J_{cd})}
+    A_{cdeabj}^{(J_3, J_{cd}, J_{ab})}
+    \right).
+  \end{split}
+\end{equation}
+
+The resulting coupled two-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ijkl}^{J_C}
+  = D_{ijkl}^{J_C}
+  + E_{ijkl}^{J_C}\,,
+\end{equation}
+with
+\begin{align}
+  \phantom{D_{ijkl}^{J_C}}
+   & \begin{aligned}
+    \mathllap{D_{ijkl}^{J_C}} & \equiv
+    \frac{1}{6} \frac{1}{\hat{J}_{C}^2}
+    \sum_{(J_3, J_{bc})}
+    \sum_{abcd}
+    (
+    n_a \bar{n}_b \bar{n}_c \bar{n}_d
+    - \bar{n}_a n_b n_c n_d
+    )                                  \\
+                              & \quad
+    \left(
+    A_{ijabcd}^{(J_3, J_C, J_{bc})} B_{bcdkla}^{(J_3, J_{bc}, J_C)}
+    - B_{ijabcd}^{(J_3, J_C, J_{bc})} A_{bcdkla}^{(J_3, J_{bc}, J_C)}
+    \right),
+  \end{aligned} \\
+  \phantom{D_{ijkl}^{J_C}}
+   & \begin{aligned}
+    \mathllap{E_{ijkl}^{J_C}} & \equiv
+    (-1)^{j_j + j_l}
+    \sum_{(J_{A,3}, J_{ab}, J_{cd})}
+    (-1)^{J_{ab} + J_{cd}} \hat{J}_{A,3}^2
+    \sum_{J_{B,3}}
+    \hat{J}_{B,3}^2                    \\
+                              & \quad
+    \ninej{j_i}{J_{A,3}}{J_{ab}}{j_j}{J_{cd}}{J_{B,3}}{J_{C}}{j_l}{j_k}
+    \sum_{abcd}
+    (
+    \bar{n}_a \bar{n}_b n_c n_d
+    - n_a n_b \bar{n}_c \bar{n}_d
+    )                                  \\
+                              & \quad
+    A_{abicdk}^{(J_{A,3}, J_{ab}, J_{cd})}
+    B_{cdjabl}^{(J_{B,3}, J_{cd}, J_{ab})}\,.
+  \end{aligned}
+\end{align}
+
+The resulting coupled three-body matrix elements are given by the coupled expression
+\begin{equation}
+  C_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}
+  = D_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}
+  + E_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}
+  + F_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}\,,
+\end{equation}
+with
+\begin{align}
+  \phantom{D_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}}
+   & \begin{aligned}
+    \mathllap{D_{ijklmn}^{(J_{C,3}, J_{C,ij}, J_{C,lm})}}
+     & \equiv \frac{1}{6} \sum_{J_{ab}}
+    \sum_{ab}
+    (n_a n_b n_c + \bar{n}_a \bar{n}_b \bar{n}_c)
+    \\
+     & \quad \left(
+    A_{ijkabc}^{(J_{C,3}, J_{C,ij}, J_{ab})}
+    B_{abclmn}^{(J_{C,3}, J_{ab}, J_{C,lm})}
+    - B_{ijkabc}^{(J_{C,3}, J_{C,ij}, J_{ab})}
+    A_{abclmn}^{(J_{C,3}, J_{ab}, J_{C,lm})}
+    \right)\,.
+  \end{aligned}                         \\
+   & \begin{aligned}
+    \mathllap{\overline{E}_{ij\bar{n}lm\bar{k}}^{(J_{3},J_{C,ij},J_{C,lm})}} \equiv
+    \frac{9}{2} \sum_{J_{ab}}
+    \sum_{abc}
+    (n_a n_b \bar{n}_c +  \bar{n}_a \bar{n}_b n_c)
+    \overline{B}_{ij\bar{n}ab\bar{c}}^{(J_{3}, J_{C,ij}, J_{ab})}
+    \overline{A}_{ab\bar{c}lm\bar{k}}^{(J_{3}, J_{ab}, J_{C,lm})}\,,
+  \end{aligned}\label{eq:comm333_term2} \\
+   & \begin{aligned}
+    \mathllap{\overline{F}_{ij\bar{n}lm\bar{k}}^{(J_{3}, J_{C,ij}, J_{C,lm})}}
+    \equiv -\frac{9}{2}
+    \sum_{J_{ab}}
+    \sum_{abc}
+    (n_a n_b \bar{n}_c +  \bar{n}_a \bar{n}_b n_c)
+    \overline{A}_{ij\bar{n}ab\bar{c}}^{(J_{3}, J_{C,ij}, J_{ab})}
+    \overline{B}_{ab\bar{c}lm\bar{k}}^{(J_{3}, J_{ab}, J_{C,lm})}\,.
+  \end{aligned}\label{eq:comm333_term3}
+\end{align}
+The expressions in Eqs.~\eqref{eq:comm333_term2} and~\eqref{eq:comm333_term3}
+are written in terms of Pandya-transformed matrix elements,
+where the three-body Pandya transformation is given by
+\begin{equation}
+  \overline{O}_{pq\bar{r}st\bar{u}}^{(J_{3}, J_{pq}, J_{st})}
+  \equiv - \sum_{J_{3}'}
+  \hat{J}_{3}^{\prime 2}
+  \sixj{J_{pq}}{j_r}{J_{3}}{J_{st}}{j_u}{J_{3}'}
+  O_{pqustr}^{(J_{3}', J_{pq}, J_{st})}\,.
+\end{equation}
+The indices $\bar{r}$ and $\bar{u}$ are time reversed,
+that is, their angular-momentum projections are flipped.
+Since we are working with reduced indices
+without angular-momentum projections everywhere,
+this distinction is irrelevant,
+but we keep the modified indices around to be formally precise.
+The Pandya-transformed matrix elements
+are useful intermediates that isolate recoupling on $A$, $B$, and $E$/$F$
+that can be done independently.
+The resulting $\overline{E}$ and $\overline{F}$ must be
+converted back to normal coupled matrix elements
+by a final Pandya transformation
+before being added to $D$ to give $C$.
+
+\subsection{Validation of numerical implementation}
+
+With any numerical implementation,
+there is the question of how we can ensure that
+the code correctly implements the underlying formalism.
+With the $J$-scheme IMSRG,
+one has the advantage that
+there is the (more transparent) $m$-scheme formalism
+that one can compare against.
+This means one can uncouple the initial Hamiltonian
+fed into the $J$-scheme implementation,
+solve the IMSRG(3) flow equations via an $m$-scheme implementation,
+and compare the results with those of the $J$-scheme IMSRG(3) solver.
+This can be done by looking at the ground-state energy
+or the second-order MBPT energy correction
+or by recoupling the resulting Hamiltonian matrix elements
+and checking that they match the $J$-scheme matrix elements
+to within the expected precision.
+
+We take a more fine-grained approach to validating
+our $J$-scheme IMSRG(3) implementation,
+but using the same overall strategy.
+Working with the same initial matrix elements
+(in coupled and uncoupled form),
+we evaluate the fundamental commutators
+(and some many-body operations like
+the second-order MBPT energy correction and the two- and three-body antisymmetrizers)
+in our $J$-scheme implementation
+and an independent $m$-scheme implementation
+(used in Section~\ref{sec:imsrg2_he4_mscheme} and Appendix~\ref{app:pairing_hamiltonian_imsrg3}).
+The resulting uncoupled matrix elements
+provided by the $m$-scheme implementation
+are then recoupled and compared with the coupled matrix elements
+provided by the $J$-scheme implementation.
+With this strategy,
+we can demand stringent numerical agreement between the results,
+because accumulated numerical error should be low.
+We find all tested operations,
+which includes all fundamental commutators with antisymmetrization,
+the second-order MBPT energy corrections,
+and the normal ordering methods,
+pass this check.
+
+\section{Outlook towards tensor operators}\label{sec:tensor_jscheme}
+
+Implementing tensor operator support in the IMSRG
+provides access to the full range of observables.
+Examples of observable tensor operators are
+electric and magnetic multipole operators,
+which when implemented give access to
+low-lying spectroscopy~\cite{Parz17imsrg_em_obs}.
+
+The implementation of tensor operators
+is a bit more challenging than that of scalar operators
+for a couple of reasons.
+First, the coupled matrix elements of tensor operators
+are no longer diagonal in total angular momentum $J$
+and angular-momentum projection $M$~\cite{Tich20jcoupling}.
+The $M$-dependence is taken care of by
+the factorization provided by the Wigner-Eckart theorem.
+However, when using the reduced matrix elements
+the non-diagonality in $J$ remains,
+so the representation that worked for scalar operators
+needs to be generalized to support this
+(along with the inclusion of the tensor rank).
+
+Additionally, one requires a whole new set
+of fundamental commutators,
+specifically those of a scalar operator
+(either the generator $\eta$ or the Magnus operator $\Omega$)
+and a tensor operator.
+The \texttt{amc} code has no trouble generating
+the coupled/reduced expressions for these fundamental commutators~\cite{Tich20jcoupling},
+but the implementation effort for these additional commutators
+will be similar to (probably greater than) that for the scalar-scalar commutators.
+Ultimately,
+in order to explore electroweak observables in nuclei,
+additional work in this direction must be done
+to implement these more general tensor-scalar commutators.

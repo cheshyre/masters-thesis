@@ -1,0 +1,187 @@
+\chapter{\texorpdfstring{$m$-scheme}{M-scheme} fundamental commutators for the IMSRG(3)}\label{app:mscheme_fundamental_commutators}
+
+We list the $m$-scheme fundamental commutators needed for the IMSRG(3),
+taken from Ref.~\cite{Herg15imsrgphysrep}.
+The commutator of a $K$-body and an $L$-body operator
+gives $|K-L|$- to $(K+L-1)$-body terms:
+\begin{equation}
+  \left[A^{(K)}, B^{(L)}\right] = \sum_{M=|K - L|}^{K + L - 1} C^{(M)}\,.
+\end{equation}
+Note that the expressions we give below are
+for the matrix elements of the different $M$-body terms.
+Also note that expressions for two- and three-body matrix elements
+are not antisymmetrized,
+so the appropriate antisymmetrizer must be applied
+to the matrix elements after evaluating the commutator.
+We use the convention that the index labels $i$,~$j$,~$k$,~\ldots\
+are reserved for external indices,
+that is, indices appearing on the matrix elements of the resulting operator,
+and the index labels $a$,~$b$,~$c$,~\ldots\
+are reserved for contracted indices,
+that is, indices that are summed over in the matrix elements of the input operators.
+$n_a$ are the occupation numbers,
+and $\bar{n}_a = 1 - n_a$.
+
+\section{
+  \texorpdfstring{$[\onebodyop{A}, \onebodyop{B}]$}{[1, 1]}
+ }
+
+The commutator of two one-body operators
+has a zero-body part,
+\begin{equation}
+  C = \sum_{ab} (n_a - n_b) A_{ab} B_{ba}\,,
+\end{equation}
+and a one-body part
+\begin{equation}
+  C_{ij} = \sum_{a}(A_{ia} B_{aj} - B_{ia} A_{aj})\,.
+\end{equation}
+
+\section{
+  \texorpdfstring{$[\onebodyop{A}, \twobodyop{B}]$}{[1, 2]}
+ }
+
+The commutator of a one-body operator and a two-body operator
+has a one-body part,
+\begin{equation}
+  C_{ij} = \sum_{ab} (n_a - n_b) A_{ab} B_{biaj}\,,
+\end{equation}
+and a two-body part,
+\begin{equation}
+  C_{ijkl} = 2 \sum_{a} (A_{ia} B_{ajkl} - A_{ak} B_{ijal})\,.
+\end{equation}
+
+\section{
+  \texorpdfstring{$[\twobodyop{A}, \twobodyop{B}]$}{[2, 2]}
+ }
+
+The commutator of two two-body operators
+has a zero-body part,
+\begin{equation}
+  C = \frac{1}{4} \sum_{abcd}
+  (n_a n_b \bar{n}_c \bar{n}_d - \bar{n}_a \bar{n}_b n_c n_d)
+  A_{abcd} B_{cdab}\,,
+\end{equation}
+a one-body part,
+\begin{equation}
+  C_{ij} = \frac{1}{2} \sum_{abc}
+  (\bar{n}_a \bar{n}_b n_c + n_a n_b \bar{n}_c)
+  (A_{ciab} B_{abcj} - B_{ciab} A_{abcj})\,,
+\end{equation}
+a two-body part,
+\begin{equation}
+  C_{ijkl} = D_{ijkl} + E_{ijkl}\,,
+\end{equation}
+with
+\begin{align}
+  D_{ijkl} & \equiv \frac{1}{2} \sum_{ab} (\bar{n}_a - n_b)
+  (A_{ijab} B_{abkl} - B_{ijab} A_{abkl})\,,                     \\
+  E_{ijkl} & \equiv 4 \sum_{ab} (n_a - n_b) A_{aibk} B_{bjal}\,,
+\end{align}
+and a three-body part,
+\begin{equation}
+  C_{ijklmn} = 9 \sum_{a} (A_{ijla} B_{akmn} - B_{ijla} A_{akmn})\,.
+\end{equation}
+
+\section{
+  \texorpdfstring{$[\onebodyop{A}, \threebodyop{B}]$}{[1, 3]}
+ }
+
+The commutator of a one-body operator and a three-body operator
+has a two-body part,
+\begin{equation}
+  C_{ijkl} = \sum_{ab} (n_a - n_b) A_{ab} B_{bijakl}\,,
+\end{equation}
+and a three-body part,
+\begin{equation}
+  C_{ijklmn} = 3 \sum_{a} (
+  A_{ia} B_{ajklmn} - A_{al} B_{ijkamn}
+  )\,.
+\end{equation}
+
+\section{
+  \texorpdfstring{$[\twobodyop{A}, \threebodyop{B}]$}{[2, 3]}
+ }
+
+The commutator of a two-body operator and a three-body operator
+has a one-body part,
+\begin{equation}
+  C_{ij} = -\frac{1}{4} \sum_{abcd}
+  (n_a n_b \bar{n}_c \bar{n}_d - \bar{n}_a \bar{n}_b n_c n_d)
+  A_{cdab} B_{abijcd}\,,
+\end{equation}
+a two-body part,
+\begin{equation}
+  C_{ijkl} = - \sum_{ab}
+  (n_a \bar{n}_b \bar{n}_c + \bar{n}_a n_b n_c)
+  (A_{bcak} B_{aijbcl} + A_{bcai} B_{aklbcj})\,,
+\end{equation}
+and a three-body part,
+\begin{equation}
+  C_{ijklmn} = \frac{3}{2} \sum_{ab} (\bar{n}_a - n_b)
+  (A_{ijab} B_{abklmn} - A_{abmn} B_{ijklab})\,.
+\end{equation}
+
+\section{
+  \texorpdfstring{$[\threebodyop{A}, \threebodyop{B}]$}{[3, 3]}
+ }
+
+The commutator of two three-body operators
+has a zero-body part,
+\begin{equation}
+  C = \frac{1}{36} \sum_{abcdef}
+  (
+  n_a n_b n_c \bar{n}_d \bar{n}_e \bar{n}_f
+  - \bar{n}_a \bar{n}_b \bar{n}_c n_d n_e n_f
+  )
+  A_{abcdef} B_{defabc}\,,
+\end{equation}
+a one-body part,
+\begin{equation}
+  C_{ij} = \frac{1}{12}
+  \sum_{abcde} (
+  n_a n_b \bar{n}_c \bar{n}_d \bar{n}_e
+  + \bar{n}_a \bar{n}_b n_c n_d n_e
+  )
+  (
+  A_{abicde} B_{cdeabj}
+  - B_{abicde} A_{cdeabj}
+  )\,,
+\end{equation}
+a two-body part,
+\begin{equation}
+  C_{ijkl} = D_{ijkl} + E_{ijkl}\,,
+\end{equation}
+with
+\begin{align}
+  D_{ijkl} & \equiv \frac{1}{6} \sum_{abcd}
+  (
+  n_a \bar{n}_b \bar{n}_c \bar{n}_d
+  - \bar{n}_a n_b n_c n_d
+  )
+  (
+  A_{aijbcd} B_{bcdakl}
+  - B_{aijbcd} A_{bcdakl}
+  )\,,                                      \\
+  E_{ijkl} & \equiv \sum_{abcd}
+  (
+  \bar{n}_a \bar{n}_b n_c n_d
+  - n_a n_b \bar{n}_c \bar{n}_d
+  )
+  A_{abicdl} B_{cdjabk}\,,
+\end{align}
+and a three-body part,
+\begin{equation}
+  C_{ijklmn} = D_{ijklmn} + E_{ijklmn} + F_{ijklmn}\,,
+\end{equation}
+with
+\begin{align}
+  D_{ijklmn} & \equiv \frac{1}{6} \sum_{abc}
+  (n_a n_b n_c + \bar{n}_a \bar{n}_b \bar{n}_c)
+  (A_{ijkabc} B_{abclmn} - B_{ijkabc} A_{abclmn})\,, \\
+  E_{ijklmn} & \equiv \frac{9}{2} \sum_{abc}
+  (n_a n_b \bar{n}_c +  \bar{n}_a \bar{n}_b n_c)
+  A_{abkcmn} B_{cijabl}\,,                           \\
+  F_{ijklmn} & \equiv -\frac{9}{2} \sum_{abc}
+  (n_a n_b \bar{n}_c +  \bar{n}_a \bar{n}_b n_c)
+  A_{cjkabn} B_{iablmc}\,.
+\end{align}

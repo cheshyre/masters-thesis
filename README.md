@@ -1,8 +1,76 @@
-# Matthias Heinz: Master's thesis
+# Matthias Heinz's Master's thesis: Analysis of three-body effects in the in-medium similarity renormalization group
 
-This repository will contain my Master's proposal and thesis and the slides for both defenses.
-Once the actual topic is clear, I will update this to include the proper title
-and a minimal abstract in the README.
+This repository contains my Master's proposal and thesis and the slides for both defenses.
+
+## Abstract
+
+The in-medium similarity renormalization group (IMSRG)
+is an *ab initio* many-body method used to great success
+to solve the time-independent Schrödinger equation in medium-mass nuclear systems.
+Its computational cost scales polynomially in the size of the truncated model space,
+and its formalism is highly flexible,
+leading to multiple variants that have been developed to extend its original closed-shell
+formulation to open-shell systems.
+
+The current state-of-the-art implementations truncate the IMSRG equations
+at the normal-ordered two-body level,
+the first non-trivial order in the expansion.
+In this work, we seek to systematically study the effects
+of extending this truncation to the normal-ordered three-body level,
+the so-called IMSRG(3) approximation.
+Exploitation of symmetries is essential to making IMSRG(3) calculations tractable.
+We present the reduced `J`-scheme IMSRG(3) working equations,
+which we arrive at by applying angular-momentum reduction to the IMSRG(3) for spherical systems.
+
+We use our implementation of the `J`-scheme IMSRG(3)
+to investigate three-body contributions
+that first appear in the IMSRG(3)
+in light and medium-mass nuclei.
+We introduce approximate IMSRG(3) truncations
+that leave out the most expensive parts of the IMSRG(3).
+We find that in helium-4
+and oxygen-16
+in a restricted `emax=2` model space,
+these approximate IMSRG(3) truncation schemes
+deliver small, sub-percent corrections to the ground-state energies
+and larger corrections to radii.
+Further, by investigating the behavior
+under the removal or inclusion of certain terms,
+we see that the organization by computational cost
+used to set up our approximate truncation schemes
+is poorly motivated
+and some computationally more expensive terms
+provide larger corrections to ground-state energies
+than the cheaper terms in the truncation.
+This work is a key step towards
+high-precision many-body calculations of medium-mass nuclei
+in the IMSRG.
+
+## Build requirements
+
+The build system uses a Makefile.
+This does two things:
+
+1. It (re)generates figures when the underlying data or scripts are changed or the PDFs are absent.
+2. It (re)builds the output PDFs based on changes in the chapters or the figures.
+
+All (non-external) figures are generated via `matplotlib`.
+The Makefile uses [poetry](https://python-poetry.org/) to manage the virtual environment,
+which contains `numpy`, `scipy`, and `matplotlib` to generate the plots.
+For this to work on your computer, you must install poetry.
+I recommend following the instructions on the [project website](https://python-poetry.org/),
+but a simple install can be achieved via:
+```
+python3 -m pip install --user poetry
+```
+After this, set up the virtual environment via
+```
+poetry install
+```
+in the root directory.
+
+The LaTeX build is handled by [latexrun](https://github.com/aclements/latexrun),
+which is provided in the code here for convenience.
 
 ## Versioning system
 

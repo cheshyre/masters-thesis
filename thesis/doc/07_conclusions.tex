@@ -1,0 +1,141 @@
+\chapter{Summary and outlook}\label{ch:summary}
+
+The aim of this thesis was to investigate
+the contributions of induced three-body operators
+in the IMSRG.
+To this end,
+we studied the IMSRG(3) truncation
+of the IMSRG.
+The uncoupled ($m$-scheme) implementation of the IMSRG(3)
+is too expensive for nuclear applications,
+so we exploited the spherical symmetry
+of the IMSRG
+when applied to closed-shell nuclei
+to arrive at the $J$-scheme IMSRG(3)
+fundamental commutators.
+We implemented an IMSRG(2)/(3) solver
+using these fundamental commutators
+that is more performant than
+the previous $m$-scheme implementation.
+With this implementation in hand,
+we were able to do first explorations
+of the effects of approximations to the IMSRG(3) truncation
+when compared with the IMSRG(2) truncation in ${}^{4}\text{He}$
+and ${}^{16}\text{O}$.
+
+To allow for the exploration of different single-particle bases,
+Hamiltonians, and oscillator frequencies,
+we introduced several approximate IMSRG(3) truncation schemes
+that leave out the most expensive fundamental commutators,
+one of which was the IMSRG(3)-$N^7$.
+We find that in ${}^{4}\text{He}$,
+the IMSRG(3)-$N^7$ truncation
+offers a small correction at the sub-percent level
+to the IMSRG(2) result
+for the ground-state energy
+in the $\emax=2$ model space considered.
+The corrections to the charge radius are larger,
+on the order of a few percent.
+We see that the IMSRG(3)-$N^7$
+performs somewhat better than the IMSRG(2)
+away from the optimal HF oscillator frequency,
+a trend that needs to be verified
+for larger model spaces and different systems.
+
+For ${}^{16}\text{O}$,
+we considered
+various approximate IMSRG(3) truncation schemes.
+These schemes were set up to include
+one or several fundamental commutators
+on top of the previous truncation scheme,
+starting from the IMSRG(2).
+The organization of these schemes was
+partially physically motivated
+(in particular the IMSRG(3)-A scheme),
+but most commutator inclusions
+were organized by computational cost.
+We found that this organization
+did not deliver the desired results.
+While the IMSRG(3)-A truncation
+provided a relatively significant shift
+from the IMSRG(2) results,
+the inclusion of the remaining
+$\mathcal{O}(N^6)$ and
+$\mathcal{O}(N^7)$ commutators
+provided only small corrections
+to the ground-state energy of ${}^{16}\text{O}$.
+The final truncation scheme we considered,
+which included the first $\mathcal{O}(N^8)$
+commutator,
+produced another large shift over the previous truncation.
+This suggests that computational cost
+is not a good proxy for importance in the formation of
+an approximate IMSRG(3) truncation.
+
+Looking to the future,
+there are clear objectives for our IMSRG(3) implementation.
+The first is tuning the performance of the implementation
+to put full IMSRG(3) $\emax=6$ and hopefully $\emax=8$
+within reach.
+Additional restrictions can be placed on
+for example the range of three-body channels,
+potentially allowing IMSRG(3) calculations
+to reach even larger single-particle model space sizes.
+This will allow us to perform converged IMSRG(3) calculations
+for medium-mass nuclei
+and investigate what effects it has on observables.
+Parallel to this,
+obtaining exact (full configuration interaction) results
+in $\emax=2$
+would allow us to see how IMSRG(3)
+compares with IMSRG(2)
+relative to the exact solution
+of the Schr{\"o}dinger equation
+in $\emax=2$.
+A secondary implementation goal
+is the support of tensor operators,
+which would give our implementation access to many more observables,
+such as low-lying spectroscopy.
+
+A key result of this thesis is that the organization by computational cost,
+at least for the limited calcuations discussed here
+for which we lack exact results
+provided by full configuration interaction calculations,
+is not a good strategy for developing an IMSRG(3) approximation.
+To develop the IMSRG(3) further,
+a more careful look into the behavior and structure of the fundamental commutators
+is important
+to understand the deficiencies in the naive organization by cost.
+One path to doing this is the perturbative analysis
+of the IMSRG(3) flow equations.
+This could allow one to develop an approximate IMSRG(3) truncation
+that is potentially fourth- or fifth-order exact in MBPT.
+This analysis will need to be adapted
+to account for non-HF reference states
+and also cases beyond the NO2B approximation
+where the residual normal-ordered three-body Hamiltonian
+is included at the start of the IMSRG calculation.
+In this analysis of the IMSRG(3),
+it will be interesting to look at how the IMSRG(3)
+performs relative to the IMSRG(2) under variation of the reference state.
+If one finds that the IMSRG(3) is more successful
+for sub-optimal reference states,
+understanding this feature of the IMSRG(3)
+may allow for constructions of IMSRG(3) approximations
+that share this behavior.
+
+This thesis represents a first step
+towards full IMSRG(3) calculations
+of light and medium-mass nuclei
+and the systematic development and testing
+of approximate IMSRG(3) truncation schemes.
+Accessing full IMSRG(3) calculations
+will provide access to high-precision many-body results,
+hopefully bringing the many-body uncertainty error
+for ground-state energies robustly into the per-mille range.
+Well-motivated approximations of the IMSRG(3)
+will make most of the accuracy benefits of the IMSRG(3)
+available at a lower computational cost,
+necessary for calculations where large model spaces
+are required to converge calculations,
+for example for heavy nuclei or hard, unevolved nuclear Hamiltonians.
