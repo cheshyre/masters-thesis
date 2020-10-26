@@ -48,7 +48,15 @@ THESIS_PLOTS = \
 								thesis/doc/images/he4_HF_results.pdf \
 								thesis/doc/images/term_by_term_o16_plot.pdf
 
-all: proposal_doc.pdf proposal_talk.pdf thesis_doc.pdf
+THESIS_TALK_PLOTS = \
+								thesis/talk/images/vnn_srg_emn500_n3lo.pdf \
+								thesis/talk/images/he4_imsrg2_results.pdf \
+								thesis/talk/images/he4_imsrg2_results_with_NCSM.pdf \
+								thesis/talk/images/he4_NAT_results.pdf \
+								thesis/talk/images/he4_HF_results.pdf \
+								thesis/talk/images/term_by_term_o16_plot.pdf
+
+all: proposal_doc.pdf proposal_talk.pdf thesis_doc.pdf thesis_talk.pdf
 
 clean:
 	rm -rf latex.out/
@@ -73,6 +81,10 @@ proposal_talk.pdf: proposal_talk.tex macros.tex proposal/talk/talk_macros.tex $(
 thesis_doc.pdf: thesis_doc.tex macros.tex sources.bib $(THESIS_DOCS) $(THESIS_PLOTS) apsrev4-1-mh-mod.bst
 	rm -rf latex.out/
 	poetry run python3 latexrun thesis_doc.tex -o thesis_doc.pdf
+
+thesis_talk.pdf: thesis_talk.tex macros.tex thesis/talk/talk_macros.tex $(THESIS_TALK_PLOTS)
+	rm -rf latex.out/
+	poetry run python3 latexrun thesis_talk.tex -o thesis_talk.pdf
 
 # --------------------- Thesis plots -------------------------------------
 
@@ -99,6 +111,27 @@ thesis/doc/images/he4_imsrg2_results.pdf: thesis/doc/images/he4_imsrg2_results.p
 
 thesis/doc/images/term_by_term_o16_plot.pdf: thesis/doc/images/term_by_term_o16_plot.py thesis/doc/images/data/o16/costs.json
 	poetry run python3 thesis/doc/images/term_by_term_o16_plot.py
+
+# --------------------- Thesis talk plots -------------------------------------
+
+thesis/talk/images/vnn_srg_emn500_n3lo.pdf: thesis/talk/images/vnn_srg_emn500_n3lo.py thesis/talk/images/data/EM500new_data.json
+	poetry run python3 thesis/talk/images/vnn_srg_emn500_n3lo.py
+
+thesis/talk/images/he4_NAT_results.pdf: thesis/talk/images/he4_NAT_results.py thesis/talk/images/data/he4/imsrg2/data.json thesis/talk/images/data/he4/imsrg3/data.json
+	poetry run python3 thesis/talk/images/he4_NAT_results.py
+
+thesis/talk/images/he4_HF_results.pdf: thesis/talk/images/he4_HF_results.py thesis/talk/images/data/he4/imsrg2/data.json thesis/talk/images/data/he4/imsrg3/data.json
+	poetry run python3 thesis/talk/images/he4_HF_results.py
+
+thesis/talk/images/he4_imsrg2_results.pdf: thesis/talk/images/he4_imsrg2_results.py thesis/talk/images/data/he4/imsrg2/data.json
+	poetry run python3 thesis/talk/images/he4_imsrg2_results.py
+
+thesis/talk/images/he4_imsrg2_results_with_NCSM.pdf: thesis/talk/images/he4_imsrg2_results_with_NCSM.py thesis/talk/images/data/he4/imsrg2/data.json
+	poetry run python3 thesis/talk/images/he4_imsrg2_results_with_NCSM.py
+
+thesis/talk/images/term_by_term_o16_plot.pdf: thesis/talk/images/term_by_term_o16_plot.py thesis/talk/images/data/o16/costs.json
+	poetry run python3 thesis/talk/images/term_by_term_o16_plot.py
+
 
 # --------------------- Proposal plots -------------------------------------
 
